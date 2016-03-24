@@ -1,8 +1,23 @@
-from image import Image
+'''Jpeg extraction
+'''
+from .image import Image
 
 
 class Jpeg(Image):
+    ''' Match a jpeg.
+    '''
     magic = [0xFF, 0xD8]
+
+    @staticmethod
+    def get_extension():
+        return ".jpg"
+
+    @staticmethod
+    def get_magic():
+        '''Returns a sequence of bytes which can serve as an identifier
+            for this type.
+        '''
+        return Jpeg.magic
 
     @staticmethod
     def calculate_length(seq, offset):
@@ -36,22 +51,24 @@ class Jpeg(Image):
         marker = seq[offset:offset+2]
         if marker != bytes([0xFF, 0xD8]):
             # Doesn't look like a JPEG image.
-            print("No valid marker found")
+            # if Image.verbose:
+            #     print("No valid marker found")
             return 0
         current += 2
 
         marker = seq[current:current+2] + seq[current+4:current+9]
         if marker == bytes([0xFF, 0xE0, 0x4A, 0x46, 0x49, 0x46, 0x00]):
             # JFIF
-            print("Found JPEG/JFIF")
-            pass
+            if Image.verbose:
+                print("Found JPEG/JFIF")
         elif marker == bytes([0xFF, 0xE1, 0x45, 0x78, 0x69, 0x66, 0x00]):
             # EXIF
-            print("Found JPEG/EXIF")
-            pass
+            if Image.verbose:
+                print("Found JPEG/EXIF")
         else:
             # Unrecognised
-            print("Not a recognised JPEG format")
+            if Image.verbose:
+                print("Not a recognised JPEG format")
             return 0
 
         # We made it this far, so it looks like a JPEG.
@@ -61,12 +78,14 @@ class Jpeg(Image):
             while marker != bytes([0xFF, 0xD9]) and marker != []:
                 if seq[current+2] == 0xFF:
                     # Looks like a new marker just after
-                    print("lengthless marker")
+                    if Image.verbose:
+                        print("lengthless marker")
                     current += 2
                 else:
                     # Skip to the end of the block
                     length = 0xFF * seq[current+2] + seq[current+3]
-                    print("Skipping %d bytes" % (length+2))
+                    if Image.verbose:
+                        print("Skipping %d bytes" % (length+2))
                     current += length + 2
 
                     # Keep on searching until we hit what looks like the next block.
@@ -76,7 +95,8 @@ class Jpeg(Image):
                 marker = seq[current:current+2]
         except IndexError:
             # Reached the end of the file before finding a match,
-            print("Couldn't find the end.")
+            if Image.verbose:
+                print("Couldn't find the end.")
             return 0
 
         # Found the end, return the length

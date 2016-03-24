@@ -1,3 +1,7 @@
-from .jpeg import Jpeg
+'''Contains image matchers.
+'''
 
-types = [Jpeg]
+from .jpeg import Jpeg
+from .png import Png
+
+types = [Jpeg, Png]

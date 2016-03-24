@@ -1,7 +1,4 @@
-class Image:
-    @classmethod
-    def test(self, seq, offset):
-        return seq[offset:offset + len(self.magic)] == self.magic
+from image import Image
 
 
 class Jpeg(Image):
@@ -84,5 +81,3 @@ class Jpeg(Image):
 
         # Found the end, return the length
         return current - offset + 2
-
-types = [Jpeg]

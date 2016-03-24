@@ -36,7 +36,6 @@ def main(infile, outfolder):
 
 
     finally:
-        print(blob)
         if blob is not None:
             blob.close()
         os.close(fd)

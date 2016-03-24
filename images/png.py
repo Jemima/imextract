@@ -1,7 +1,7 @@
 '''Png extraction
 '''
 from .image import Image
-from struct import unpack
+import struct
 
 
 class Png(Image):
@@ -15,9 +15,6 @@ class Png(Image):
 
     @staticmethod
     def get_magic():
-        '''Returns a sequence of bytes which can serve as an identifier
-            for this type.
-        '''
         return Png.magic
 
     @staticmethod
@@ -44,13 +41,19 @@ class Png(Image):
             return 0
         current += len(Png.magic)
 
-        while True:
-            length = unpack(">I", seq[current:current+4])[0]
-            current += 4
-            marker = seq[current:current+4]
-            current += 4
-            current += length + 4
-            if Image.verbose:
-                print("Found chunk %s" % marker.decode())
-            if marker == "IEND".encode():
-                return current - offset
+        try:
+            while True:
+                length = struct.unpack(">I", seq[current:current+4])[0]
+                current += 4
+                marker = seq[current:current+4]
+                current += 4
+                current += length + 4
+                if Image.verbose:
+                    print("Found chunk %s" % marker.decode())
+                if marker == "IEND".encode():
+                    return current - offset
+        except struct.error:
+            # Looks like we hit the end of our blob
+            # before finding the end chunk,
+            # probably not a PNG after all.
+            return 0

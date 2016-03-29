@@ -3,7 +3,7 @@ README
 
 Usage
 -------
-imextract in\_file out\_folder
+search.py -i in\_file -o out\_folder
 Searches in\_file for images, and extracts them if found.
 
 Summary

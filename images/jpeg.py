@@ -51,8 +51,8 @@ class Jpeg(Image):
         marker = seq[offset:offset+2]
         if marker != bytes([0xFF, 0xD8]):
             # Doesn't look like a JPEG image.
-            # if Image.verbose:
-            #     print("No valid marker found")
+            if Image.verbose:
+                print("No valid marker found, got " + str(marker))
             return 0
         current += 2
 

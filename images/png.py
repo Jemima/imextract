@@ -36,8 +36,8 @@ class Png(Image):
         marker = seq[offset:offset+len(Png.magic)]
         if marker != bytes(Png.magic):
             # Doesn't look like a PNG image.
-            # if Image.verbose:
-            #     print("No valid marker found")
+            if Image.verbose:
+                print("No valid marker found")
             return 0
         current += len(Png.magic)
 
